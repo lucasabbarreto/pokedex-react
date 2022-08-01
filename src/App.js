@@ -1,6 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
-import { FiSearch } from "react-icons/fi";
-import { FaRegQuestionCircle } from "react-icons/fa";
+import { FiSearch, FiArrowLeft, FiArrowRight } from "react-icons/fi";
 import { getPokemonData, getPokemonAbility } from './services/api';
 
 import './App.css'
@@ -12,8 +11,6 @@ function App() {
   const [pokemonData, setPokemonData] = useState("");
   const [pokemonImage, setImage] = useState("");
   const [pokemonTypes, setPokemonTypes] = useState([]);
-  const [pokemonAbility, setPokemonAbility] = useState("");
-  const [abilityDescription, setAbilityDescription] = useState("")
   const [StyleStatBar, setStyleStatBar] = useState([]);
   const [StyleFrameGradient, SetStyleFrameGradient] = useState([]);
 
@@ -43,27 +40,10 @@ function App() {
       function serializedData() {
         setImage(pokemonData.sprites.other['official-artwork']['front_default']);
         setPokemonTypes(pokemonData.types);
-        setPokemonAbility(pokemonData.abilities[0].ability.name);
       }
       serializedData();
     }
   }, [pokemonData]);
-
-  useEffect(() => {
-    if (pokemonAbility) {
-      async function getAbilityDescription() {
-        const url = pokemonData.abilities[0].ability.url
-        const abilityData = await getPokemonAbility.get(url);
-        const AllDescriptions = abilityData.data['effect_entries'].filter(descriptions => {
-          return descriptions.language.name === 'en'
-        })
-        const description = AllDescriptions[0]['short_effect'];
-        setAbilityDescription(description);
-      }
-
-      getAbilityDescription();
-    }
-  }, [pokemonData, abilityDescription])
 
   useEffect(() => {
     if (pokemonData) {
@@ -118,7 +98,7 @@ function App() {
         } else if (type.type.name === 'fairy') {
           gradientColors.push('#F0B6BC')
         }
-        
+
       })
       if (gradientColors.length < 2) {
         gradientColors.push('#FFF')
@@ -136,55 +116,50 @@ function App() {
 
     }
   }, [pokemonTypes])
-  console.log(abilityDescription)
 
   return (
     <main>
-      {/* <div className="background">
-        <div className="pokeball-outer-circle">
-          <div className="pokemon-belt"></div>
-        </div>
-      </div> */}
-      <div className="background-image"></div>
-      <form className="search-pokemon" onSubmit={handleSubmit}>
-        <input onChange={handleInputChange} className='search-pokemon-input' name='pokemon' placeholder='Search a Pokémon by name or number'></input>
-        <button onSubmit={handleSubmit} className="search-pokemon-button" type='submit'>
-          <FiSearch />
-        </button>
-      </form>
-      <div className='pokemon-data'>
-        <small className='number-name-container'>
-          nº <span className='pokemon-number'>{pokemonData.id}</span> - <span className='pokemon-name'>{pokemonData.name}</span>
-        </small>
-        <div className='frame-stats-container'>
-          <div className='pokemon-frame'>
-            <div className="frame-background" style={StyleFrameGradient}></div>
-            <img src={pokemonImage} className='pokemon-image' alt="pokemon"></img>
-            {/* <small className='pokemon-type'> Type(s):
+      <img className="background-image"></img>
+      <button className='btn-left'><FiArrowLeft/></button>
+      <div className='pokemon-info-wrapper'>
+        
+        <form className="search-pokemon" onSubmit={handleSubmit}>
+          <label className="search-pokemon-label" for="pokemon">Search a Pokémon:</label>
+          <input onChange={handleInputChange} className='search-pokemon-input' id="pokemon" name='pokemon' placeholder='name or number'></input>
+          <button onSubmit={handleSubmit} className="search-pokemon-button" type='submit'>
+            <FiSearch />
+          </button>
+        </form>
+        <div className='pokemon-data'>
+          <small className='number-name-container'>
+            nº <span className='pokemon-number'>{pokemonData.id}</span> - <span className='pokemon-name'>{pokemonData.name}</span>
+          </small>
+          <div className='frame-stats-container'>
+            <div className='pokemon-frame-stats-container'>
+              <div className='pokemon-frame'>
+                <div className="frame-background" style={StyleFrameGradient}></div>
+                <img src={pokemonImage} className='pokemon-image' alt="pokemon"></img>
+              </div>
+              <div className='pokemon-stats'>
+                <span>Stats:</span>
+                {StyleStatBar.map(style => (
+                  <div key={StyleStatBar.indexOf(style)} className='stat-bar'>
+                    <div className='stat-bar-value' style={style[0]}></div>
+                    <span>{style[1]}</span>
+                  </div>
+                ))}
+
+              </div>
+            </div>
+            <small className='pokemon-type'> Type(s):
               {pokemonTypes.map(type => (
                 <span key={pokemonTypes.indexOf(type)} className='pokemon-type-name'>{type.type.name}</span>
               ))}
-            </small> */}
-          </div>
-          <div className="pokemon-ability-stats-container">
-            <small className="pokemon-ability">
-              Ability:
-              <span className='ability-name'> {pokemonAbility} </span>
-              <FaRegQuestionCircle className="ability-question-mark" />
-              <span className="ability-details"> {abilityDescription} </span>
             </small>
-            <div className='pokemon-stats'>
-              <span>Stats:</span>
-              {StyleStatBar.map(style => (
-                <div key={StyleStatBar.indexOf(style)} className='stat-bar'>
-                  <div className='stat-bar-value' style={style[0]}></div>
-                  <span>{style[1]}</span>
-                </div>
-              ))}
-            </div>
           </div>
         </div>
       </div>
+      <button className='btn-right'><FiArrowRight/></button>
     </main>
 
   );
