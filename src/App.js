@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
-import { FiSearch, FiArrowLeft, FiArrowRight } from "react-icons/fi";
+import { FiSearch, FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { getPokemonData, getPokemonAbility } from './services/api';
 
 import './App.css'
@@ -13,18 +13,31 @@ function App() {
   const [pokemonTypes, setPokemonTypes] = useState([]);
   const [StyleStatBar, setStyleStatBar] = useState([]);
   const [StyleFrameGradient, SetStyleFrameGradient] = useState([]);
-
-
-  const handleInputChange = (e) => {
-    if (e.target.value) {
-      setGetPokemon({ pokemon: e.target.value })
-    }
-  };
+  const [pokemon, setPokemon] = useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    const data = getPokemon.pokemon;
+    const data = pokemon;
     setInputData(data);
+    setPokemon("");
+  }
+
+  const handleLeftButton = () => {
+    let previousPokemon = Number(InputData) - 1;
+    if (previousPokemon === 0) {
+      previousPokemon = 898;
+    }
+    setInputData(JSON.stringify(previousPokemon));
+    setPokemon("");
+  }
+
+  const handleRightButton = () => {
+    let nextPokemon = Number(InputData) + 1;
+    if (nextPokemon === 899) {
+      nextPokemon = 1
+    }
+    setInputData(JSON.stringify(nextPokemon));
+    setPokemon("");
   }
 
   useEffect(() => {
@@ -104,13 +117,10 @@ function App() {
         gradientColors.push('#FFF')
       }
 
-
       if (gradientColors.length === 2) {
         const gradient = { backgroundImage: `linear-gradient(to bottom right, ${gradientColors[0]}, ${gradientColors[1]}, ${gradientColors[0]}, ${gradientColors[1]})` }
         SetStyleFrameGradient(gradient);
       }
-
-
 
       setStyleStatBar(dynamicStatsBar);
 
@@ -120,12 +130,11 @@ function App() {
   return (
     <main>
       <img className="background-image"></img>
-      <button className='btn-left'><FiArrowLeft/></button>
+      <button className='btn-left' onClick={handleLeftButton}><FiChevronLeft className='arrow-left' /></button>
       <div className='pokemon-info-wrapper'>
-        
         <form className="search-pokemon" onSubmit={handleSubmit}>
-          <label className="search-pokemon-label" for="pokemon">Search a Pokémon:</label>
-          <input onChange={handleInputChange} className='search-pokemon-input' id="pokemon" name='pokemon' placeholder='name or number'></input>
+          <label className="search-pokemon-label" htmlFor="pokemon">Search a Pokémon:</label>
+          <input onChange={event => setPokemon(event.target.value)} className='search-pokemon-input' id="pokemon" name='pokemon' placeholder='name or number' value={pokemon}></input>
           <button onSubmit={handleSubmit} className="search-pokemon-button" type='submit'>
             <FiSearch />
           </button>
@@ -148,20 +157,20 @@ function App() {
                     <span>{style[1]}</span>
                   </div>
                 ))}
-
               </div>
             </div>
-            <small className='pokemon-type'> Type(s):
-              {pokemonTypes.map(type => (
-                <span key={pokemonTypes.indexOf(type)} className='pokemon-type-name'>{type.type.name}</span>
-              ))}
-            </small>
           </div>
+          <small className='pokemon-type'> Type(s):
+            {pokemonTypes.map(type => (
+              <span key={pokemonTypes.indexOf(type)} className='pokemon-type-name'>{type.type.name}</span>
+            ))}
+          </small>
         </div>
       </div>
-      <button className='btn-right'><FiArrowRight/></button>
+      <button className='btn-right' onClick={handleRightButton}>
+        <FiChevronRight className='arrow-right' />
+      </button>
     </main>
-
   );
 }
 
