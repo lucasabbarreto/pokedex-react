@@ -18,18 +18,14 @@ main {
     flex-direction: column;
     gap: 5px;
     justify-content: center;
-    align-items: center;
-    /* background-image: linear-gradient( to bottom, #d4f0f5 50%, green, rgb(66, 19, 19) ); */
-    
-    /* background-color: #d4f0f5; */
-
+    align-items: center; 
 }
 
 .background-image {
     width: 100vw;
     height: 100%;
     position: absolute;
-    background-image: url(../public/pokemon-anime-journeys-netflix-1217067-1224386.png);
+    background-image: url(./assets/background-image.png);
     background-position: center;
     background-repeat:no-repeat;
     background-size: cover;
